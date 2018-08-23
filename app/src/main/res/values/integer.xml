@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="main_vertical">2</integer>
+    <integer name="main_horizontal">4</integer>
+
+    <integer name="detail_vertical">2</integer>
+    <integer name="detail_horizontal">4</integer>
+
+</resources>
