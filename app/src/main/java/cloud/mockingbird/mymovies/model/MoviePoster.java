@@ -1,4 +1,4 @@
-package cloud.mockingbird.mymovies;
+package cloud.mockingbird.mymovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
