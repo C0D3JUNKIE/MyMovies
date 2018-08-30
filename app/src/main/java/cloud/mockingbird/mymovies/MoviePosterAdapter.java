@@ -26,6 +26,8 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
   public class MoviePosterAdapterViewHolder extends RecyclerView.ViewHolder implements
       OnClickListener{
 
+    ImageView movieImage;
+
     public MoviePosterAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
       movieImage = (ImageView) itemView.findViewById(R.id.iv_movie_poster);
@@ -45,7 +47,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
   @Override
   public MoviePosterAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     Context context = parent.getContext();
-    int layoutIdForListItem = R.layout.gv_movie_poster_list;
+    int layoutIdForListItem = R.layout.movie_poster_item;
     LayoutInflater inflater = LayoutInflater.from(context);
     boolean attachToParentImmediately = false;
 
@@ -56,7 +58,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
   @Override
   public void onBindViewHolder(@NonNull MoviePosterAdapterViewHolder holder, int position) {
     String selectedMovie = moviePosterData[position];
-    holder.moviePosterImageView.setImage(selectedMovie);
+    holder.movieImage.setIm();
   }
 
   @Override
