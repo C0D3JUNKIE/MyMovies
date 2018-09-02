@@ -3,6 +3,7 @@ package cloud.mockingbird.mymovies.utilities;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import cloud.mockingbird.mymovies.R;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,14 +12,28 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class NetworkUtility {
+
   private static final String LOG_TAG = NetworkUtility.class.getSimpleName();
-  private static final String BASE_URL = "http://api.themoviedb.org/3/movie";
-  private static final String DEFULT_URL = BASE_URL;
-  private static final String KEY_PARAM = api_key;
+  private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
+  private static final String DEFAULT_URL = BASE_URL;
+  private static final String KEY_PARAM = "api_key";
 
-  public static URL buildUrl(Context context, String criteria){
 
-    Uri builtUri = Uri.parse(DEFULT_URL).buildUpon().appendPath(criteria).appendQueryParameter(KEY_PARAM, context.getString(R.string.tmdb_key)).build();
+  /**
+   * Please note these methods are cookie cutter methods from Google/Udacity's Sunshine Project.
+   *
+   * @param context
+   * @param params
+   * @return URL
+   */
+  public static URL buildUrl(Context context, String params){
+
+    Uri builtUri = Uri.parse(DEFAULT_URL)
+        .buildUpon()
+        .appendPath(params)
+        .appendQueryParameter(KEY_PARAM, context.getString(
+            R.string.movie_db_key))
+        .build();
     URL url = null;
 
     try{
@@ -33,6 +48,13 @@ public class NetworkUtility {
 
   }
 
+  /**
+   * Please note these methods are cookie cutter methods from Google/Udacity's Sunshine Project.
+   *
+   * @param url  URL to fetch response from
+   * @return Contents of HTTP response
+   * @throws IOException For network response
+   */
   public static String getResponseFromHttpURL(URL url) throws IOException {
 
     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

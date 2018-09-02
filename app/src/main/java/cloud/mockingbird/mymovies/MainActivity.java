@@ -2,29 +2,28 @@ package cloud.mockingbird.mymovies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import cloud.mockingbird.mymovies.MoviePosterAdapter.MoviePosterAdapterOnClickHandler;
+import cloud.mockingbird.mymovies.data.MoviePreferences;
+import cloud.mockingbird.mymovies.utilities.JsonUtility;
+import cloud.mockingbird.mymovies.utilities.NetworkUtility;
+import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements MoviePosterAdapterOnClickHandler,
-    LoaderCallbacks<String[]>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements MoviePosterAdapterOnClickHandler{
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
   private MoviePosterAdapter moviePosterAdapter;
-
   private RecyclerView recyclerView;
   private TextView errorMessageDisplay;
   private ProgressBar loadingIndicator;
@@ -53,43 +52,8 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     moviePosterAdapter = new MoviePosterAdapter(this);
     recyclerView.setAdapter(moviePosterAdapter);
 
-
-  }
-
-  @NonNull
-  @Override
-  public Loader<String[]> onCreateLoader(int id, @Nullable Bundle args) {
-
-    return new AsyncTaskLoader<String[]>(this) {
-
-      String[] moviePosterData = null;
-
-      @Override
-      protected void onStartLoading() {
-        super.onStartLoading();
-      }
-
-      @Nullable
-      @Override
-      public String[] loadInBackground() {
-        return new String[0];
-      }
-
-      @Override
-      public void deliverResult(@Nullable String[] data) {
-        super.deliverResult(data);
-      }
-    };
-  }
-
-  @Override
-  public void onLoadFinished(@NonNull Loader<String[]> loader, String[] data) {
-
-  }
-
-  @Override
-  public void onLoaderReset(@NonNull Loader<String[]> loader) {
-
+    loadingIndicator = findViewById(R.id.pb_loading_indicator);
+    loadMovies();
   }
 
   @Override
@@ -103,25 +67,92 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-
-    int id = item.getItemId();
-
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override
-  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-
-  }
-
-  @Override
-  public void onClick(String moviePosterSelected) {
+  public void onClick(String[] moviePosterSelected) {
     Context context = this;
     Class destinationClass = DetailActivity.class;
     Intent intentToStartDetailActivity = new Intent(context, destinationClass);
     intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, moviePosterSelected);
     startActivity(intentToStartDetailActivity);
+  }
+
+  protected void showMovies(){
+    errorMessageDisplay.setVisibility(View.INVISIBLE);
+    recyclerView.setVisibility(View.VISIBLE);
+  }
+
+  protected void loadMovies(){
+    showMovies();
+    String selectedSort = MoviePreferences.getSortPreferred();
+    new FetchMovies().execute(selectedSort);
+  }
+
+  protected void showErrorMessage(){
+    recyclerView.setVisibility(View.INVISIBLE);
+    errorMessageDisplay.setVisibility(View.VISIBLE);
+  }
+
+  public class FetchMovies extends AsyncTask<String, Void, String[][]>{
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      loadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onPostExecute(String[][] strings) {
+      loadingIndicator.setVisibility(View.INVISIBLE);
+      if(strings != null){
+        showMovies();
+        moviePosterAdapter.setMoviePosterData(strings);
+      }else{
+        showErrorMessage();
+      }
+
+    }
+
+    @Override
+    protected String[][] doInBackground(String... strings) {
+      if (strings.length == 0) {
+        return null;
+      }
+      String params = strings[0];
+      URL movieURL = NetworkUtility.buildUrl(MainActivity.this, params);
+      try{
+        String jsonResponse = NetworkUtility.getResponseFromHttpURL(movieURL);
+        String[][] jsonMovieData = JsonUtility.getMoviePosterValuesFromJson(jsonResponse);
+        return jsonMovieData;
+      }catch(Exception e){
+        e.printStackTrace();
+        return null;
+      }
+    }
+
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.menu, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()){
+      case R.id.action_by_rating:
+        new FetchMovies().execute(MoviePreferences.PREF_SORT_RATING);
+        return true;
+      case R.id.action_by_popularity:
+        new FetchMovies().execute(MoviePreferences.PREF_SORT_POPULARITY);
+        return true;
+      case R.id.action_refresh:
+//      add resetMovieData call here
+        loadMovies();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 
 }

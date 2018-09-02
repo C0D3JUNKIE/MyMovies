@@ -1,6 +1,5 @@
 package cloud.mockingbird.mymovies.utilities;
 
-import android.content.Context;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +8,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * JSON Utility class for parsing The Movie Database API response.
+ */
 public class JsonUtility {
 
-  private static final String LOG_TAG = "JSON UTILITY:  ";
 
+  //Constant keys for json matching
+  private static final String LOG_TAG = "JSON UTILITY:  ";
   private static final String STATUS_CODE = "status_code";
+
   public static final String STATUS_MESSAGE = "status_message";
 
   public static final String KEY_NUMBER_RESULTS = "total_results";
   public static final String KEY_TOTAL_PAGES = "total_pages";
-  public static final String KEY_RESULTS = "all_results";
+  public static final String KEY_RESULTS = "results";
 
   public static final String KEY_VOTE_COUNT = "vote_count";
   public static final String KEY_ID =  "id";
@@ -35,7 +39,13 @@ public class JsonUtility {
   public static final String KEY_MOVIE_OVERVIEW = "overview";
   public static final String KEY_MOVIE_RELEASE_DATE = "release_date";
 
-  public static String[][] getMoviePosterValuesFromJson(Context context, String movieJsonString) throws JSONException {
+  /**
+   *
+   * @param movieJsonString
+   * @return
+   * @throws JSONException
+   */
+  public static String[][] getMoviePosterValuesFromJson(String movieJsonString) throws JSONException {
 
     JSONTokener tokener = new JSONTokener(movieJsonString);
 
@@ -44,9 +54,8 @@ public class JsonUtility {
     }
 
     JSONObject moviePoster_root = new JSONObject(movieJsonString);
-
+    //Logging status codes returned from TheMovieDB
     if(moviePoster_root.has(STATUS_CODE)) {
-
       //Assigning MovieDB status codes to vars for logging
       int movieDbResponse = moviePoster_root.getInt(STATUS_CODE);
       String movieDbStatus = moviePoster_root.getString(STATUS_MESSAGE);
@@ -99,40 +108,45 @@ public class JsonUtility {
       }
     }
 
-    JSONArray jsonMoviePosterArray = moviePoster_root.getJSONArray(KEY_ID);
+    //Get individual array of a movie
+    JSONArray jsonMoviePosterArray = moviePoster_root.getJSONArray(KEY_RESULTS);
+    //Grabbing number of arrays from returned json
+    int jsonArrayLength = jsonMoviePosterArray.length();
+    //Create and instantiate object to hold individual movies
+    String[][] movieContentValues = new String[jsonArrayLength][];
 
-    String[][] movieContentValues = new String[jsonMoviePosterArray.length()][];
-
+    //Loop through the individual values and assign to above array
     for(int i = 0; i <jsonMoviePosterArray.length(); i++) {
 
       JSONObject individualMovieObject = jsonMoviePosterArray.getJSONObject(i);
 
-      int vote_count = moviePoster_root.getInt(KEY_VOTE_COUNT);
-      int identification = moviePoster_root.getInt(KEY_ID);
+      int vote_count = individualMovieObject.getInt(KEY_VOTE_COUNT);
+      int identification = individualMovieObject.getInt(KEY_ID);
 
-      double rating = moviePoster_root.getDouble(KEY_VOTE_AVERAGE);
+      double rating = individualMovieObject.getDouble(KEY_VOTE_AVERAGE);
 
-      String video = moviePoster_root.getString(KEY_VIDEO);
-      String title = moviePoster_root.getString(KEY_MOVIE_TITLE);
-      String image = moviePoster_root.getString(KEY_MOVIE_POSTER_PATH);
-      String popularity = moviePoster_root.getString(KEY_MOVIE_POPULARITY);
-      String original_language = moviePoster_root.getString(KEY_MOVIE_ORIGINAL_LANGUAGE);
-      String original_title = moviePoster_root.getString(KEY_MOVIE_ORIGINAL_TITLE);
+      String video = individualMovieObject.getString(KEY_VIDEO);
+      String title = individualMovieObject.getString(KEY_MOVIE_TITLE);
+      String image = individualMovieObject.getString(KEY_MOVIE_POSTER_PATH);
+      String popularity = individualMovieObject.getString(KEY_MOVIE_POPULARITY);
+      String original_language = individualMovieObject.getString(KEY_MOVIE_ORIGINAL_LANGUAGE);
+      String original_title = individualMovieObject.getString(KEY_MOVIE_ORIGINAL_TITLE);
 
       List<String> genreList = new ArrayList<>();
-      JSONArray genre_ids = moviePoster_root.getJSONArray(KEY_MOVIE_GENRE_ID);
+      JSONArray genre_ids = individualMovieObject.getJSONArray(KEY_MOVIE_GENRE_ID);
 
-      String backdrop_path = moviePoster_root.getString(KEY_MOVIE_BACKDROP_PATH);
-      String adult = moviePoster_root.getString(KEY_MOVIE_ADULT);
-      String plot = moviePoster_root.getString(KEY_MOVIE_OVERVIEW);
-      String release_date = moviePoster_root.getString(KEY_MOVIE_RELEASE_DATE);
+      String backdrop_path = individualMovieObject.getString(KEY_MOVIE_BACKDROP_PATH);
+      String adult = individualMovieObject.getString(KEY_MOVIE_ADULT);
+      String plot = individualMovieObject.getString(KEY_MOVIE_OVERVIEW);
+      String release_date = individualMovieObject.getString(KEY_MOVIE_RELEASE_DATE);
 
+      //String array to hold individual movie:  id[0], title[1], plot[2], language[3], date[4], image[5], vote[6], rating[7]
       String[] individualMovie = {String.valueOf(identification), title, plot, original_language, release_date, image, String.valueOf(vote_count), String.valueOf(rating)};
-
       movieContentValues[i] = individualMovie;
 
     }
 
+    //return parsed values
     return movieContentValues;
 
   }

@@ -8,15 +8,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import com.squareup.picasso.Picasso;
+import org.w3c.dom.Text;
 
 public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.MoviePosterAdapterViewHolder>{
 
-  private String[] moviePosterData;
+  private static final String MOVIEDB_IMAGE_URL = "http://image.tmdb.org/t/p/w154";
+
+  private String[][] moviePosterData;
 
   final private MoviePosterAdapterOnClickHandler clickHandler;
 
   public interface MoviePosterAdapterOnClickHandler{
-    void onClick(String moviePosterSelected);
+    void onClick(String[] moviePosterSelected);
   }
 
   public MoviePosterAdapter(MoviePosterAdapterOnClickHandler handler){
@@ -27,18 +32,19 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
       OnClickListener{
 
     ImageView movieImage;
+    TextView movieText;
 
     public MoviePosterAdapterViewHolder(@NonNull View itemView) {
       super(itemView);
       movieImage = (ImageView) itemView.findViewById(R.id.iv_movie_poster);
+      movieText = (TextView) itemView.findViewById(R.id.tv_movie_text);
       itemView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
       int adapterPosition = getAdapterPosition();
-      String moviePosterSelected = moviePosterData[adapterPosition];
-      clickHandler.onClick(moviePosterSelected);
+      clickHandler.onClick(moviePosterData[adapterPosition]);
     }
 
   }
@@ -57,8 +63,9 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
   @Override
   public void onBindViewHolder(@NonNull MoviePosterAdapterViewHolder holder, int position) {
-    String selectedMovie = moviePosterData[position];
-    holder.movieImage.setIm();
+    String selectedMovie[] = moviePosterData[position];
+    holder.movieText.setText(selectedMovie[1]);
+    Picasso.get().load(MOVIEDB_IMAGE_URL + selectedMovie[5]);
   }
 
   @Override
@@ -69,7 +76,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     return moviePosterData.length;
   }
 
-  public void setMoviePosterData(String[] movieData){
+  public void setMoviePosterData(String[][] movieData){
     moviePosterData = movieData;
     notifyDataSetChanged();
   }
