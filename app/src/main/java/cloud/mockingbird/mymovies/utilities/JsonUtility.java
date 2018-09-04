@@ -59,6 +59,9 @@ public class JsonUtility {
       //Assigning MovieDB status codes to vars for logging
       int movieDbResponse = moviePoster_root.getInt(STATUS_CODE);
       String movieDbStatus = moviePoster_root.getString(STATUS_MESSAGE);
+      if(moviePoster_root.has(STATUS_MESSAGE)){
+        movieDbStatus = String.format("JSON STATUS MESSAGE: ", moviePoster_root.getString(STATUS_MESSAGE));
+      }
       //Switch for MovieDB status codes, for specific messages see:  https://www.themoviedb.org/documentation/api/status-codes
       switch (movieDbResponse) {
         case 200:

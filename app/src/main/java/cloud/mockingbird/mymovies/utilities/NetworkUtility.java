@@ -17,6 +17,8 @@ public class NetworkUtility {
   private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
   private static final String DEFAULT_URL = BASE_URL;
   private static final String KEY_PARAM = "api_key";
+  private static final String LANG_PARAM = "en-US";
+  private static final String PAGE_PARAM = "1";
 
 
   /**
@@ -33,6 +35,8 @@ public class NetworkUtility {
         .appendPath(params)
         .appendQueryParameter(KEY_PARAM, context.getString(
             R.string.movie_db_key))
+        .appendQueryParameter("language", LANG_PARAM)
+        .appendQueryParameter("page", PAGE_PARAM)
         .build();
     URL url = null;
 
@@ -69,7 +73,6 @@ public class NetworkUtility {
       }else{
         return null;
       }
-
     }finally{
       urlConnection.disconnect();
     }

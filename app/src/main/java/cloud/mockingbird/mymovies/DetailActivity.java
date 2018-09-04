@@ -19,6 +19,7 @@ public class DetailActivity extends AppCompatActivity {
 
   private ImageView movieImage;
 
+
   private TextView movieTitle;
   private TextView movieReleaseDate;
   private TextView movieRating;
@@ -56,6 +57,16 @@ public class DetailActivity extends AppCompatActivity {
 
   }
 
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
   /**
    *
    * @param menu
@@ -67,5 +78,7 @@ public class DetailActivity extends AppCompatActivity {
     MenuItem menuItem = menu.findItem(R.id.action_refresh);
     return super.onCreateOptionsMenu(menu);
   }
+
+
 
 }

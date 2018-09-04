@@ -14,7 +14,7 @@ import org.w3c.dom.Text;
 
 public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.MoviePosterAdapterViewHolder>{
 
-  private static final String MOVIEDB_IMAGE_URL = "http://image.tmdb.org/t/p/w154";
+  private static final String MOVIEDB_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
 
   private String[][] moviePosterData;
 
@@ -63,9 +63,12 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
   @Override
   public void onBindViewHolder(@NonNull MoviePosterAdapterViewHolder holder, int position) {
-    String selectedMovie[] = moviePosterData[position];
-    holder.movieText.setText(selectedMovie[1]);
-    Picasso.get().load(MOVIEDB_IMAGE_URL + selectedMovie[5]);
+    String listedMovies[] = moviePosterData[position];
+//    holder.movieText.setText(listedMovies[MainActivity.TEXT_INDEX_ID]);
+    Picasso.get()
+        .load(MOVIEDB_IMAGE_URL + listedMovies[5])
+        .into(holder.movieImage);
+    //Picasso.get().load(imageURL + movie[5]).into(movieImage);
   }
 
   @Override

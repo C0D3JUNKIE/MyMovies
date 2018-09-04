@@ -3,6 +3,7 @@ package cloud.mockingbird.mymovies;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import cloud.mockingbird.mymovies.MoviePosterAdapter.MoviePosterAdapterOnClickHandler;
@@ -22,6 +24,9 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity implements MoviePosterAdapterOnClickHandler{
 
   private static final String TAG = MainActivity.class.getSimpleName();
+
+  public static final int TEXT_INDEX_ID = 1;
+  public static final int IMAGE_INDEX_ID = 5;
 
   private MoviePosterAdapter moviePosterAdapter;
   private RecyclerView recyclerView;
@@ -38,12 +43,12 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     errorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
     loadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-    //Setting for layoutManager params.
+    //Setting up layoutManager params.
     int recyclerViewOrientation = GridLayoutManager.VERTICAL;
     boolean shouldReversLayout = false;
 
     //Declare and initialize layoutManager.
-    GridLayoutManager layoutManager = new GridLayoutManager(this, 2, recyclerViewOrientation,
+    GridLayoutManager layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.span), recyclerViewOrientation,
         shouldReversLayout);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setHasFixedSize(true);
@@ -64,6 +69,16 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
   @Override
   protected void onDestroy() {
     super.onDestroy();
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
   }
 
   @Override
@@ -147,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         new FetchMovies().execute(MoviePreferences.PREF_SORT_POPULARITY);
         return true;
       case R.id.action_refresh:
-//      add resetMovieData call here
+        moviePosterAdapter.setMoviePosterData(null);
         loadMovies();
         return true;
       default:
