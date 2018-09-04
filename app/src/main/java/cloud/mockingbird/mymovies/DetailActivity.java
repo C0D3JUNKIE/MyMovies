@@ -67,17 +67,17 @@ public class DetailActivity extends AppCompatActivity {
 
   }
 
-  /**
-   *
-   * @param menu
-   * @return
-   */
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu, menu);
-    MenuItem menuItem = menu.findItem(R.id.action_refresh);
-    return super.onCreateOptionsMenu(menu);
-  }
+//  /**
+//   *
+//   * @param menu
+//   * @return
+//   */
+//  @Override
+//  public boolean onCreateOptionsMenu(Menu menu) {
+//    getMenuInflater().inflate(R.menu.menu, menu);
+//    MenuItem menuItem = menu.findItem(R.id.action_refresh);
+//    return super.onCreateOptionsMenu(menu);
+//  }
 
 
 

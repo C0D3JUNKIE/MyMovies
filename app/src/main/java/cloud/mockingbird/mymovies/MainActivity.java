@@ -3,6 +3,7 @@ package cloud.mockingbird.mymovies;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
   private RecyclerView recyclerView;
   private TextView errorMessageDisplay;
   private ProgressBar loadingIndicator;
+  private GridLayoutManager layoutManager;
+  private Parcelable moviePostersState;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     int recyclerViewOrientation = GridLayoutManager.VERTICAL;
     boolean shouldReversLayout = false;
 
-    //Declare and initialize layoutManager.
-    GridLayoutManager layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.span), recyclerViewOrientation,
+    //Initialize layoutManager.
+    layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.span), recyclerViewOrientation,
         shouldReversLayout);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setHasFixedSize(true);
@@ -74,11 +77,13 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
   @Override
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
+    outState.putParcelable("movieList",layoutManager.onSaveInstanceState());
   }
 
   @Override
   public void onRestoreInstanceState(Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
+    moviePostersState = savedInstanceState.getParcelable("movieList");
   }
 
   @Override
@@ -147,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
+    super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.menu, menu);
     return true;
