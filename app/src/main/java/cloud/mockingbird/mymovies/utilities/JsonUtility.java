@@ -25,7 +25,7 @@ public class JsonUtility {
   public static final String KEY_RESULTS = "results";
 
   public static final String KEY_VOTE_COUNT = "vote_count";
-  public static final String KEY_ID =  "id";
+  public static final String KEY_ID = "id";
   public static final String KEY_VIDEO = "video"; //This is a boolean value
   public static final String KEY_VOTE_AVERAGE = "vote_average";
   public static final String KEY_MOVIE_TITLE = "title";
@@ -40,27 +40,31 @@ public class JsonUtility {
   public static final String KEY_MOVIE_RELEASE_DATE = "release_date";
 
   /**
+   * Method for associating returned values from API to MyMovies and MoviePoster object.
    *
-   * @param movieJsonString
-   * @return
-   * @throws JSONException
+   * @return String[][] multidimensional array with associated values.
    */
-  public static String[][] getMoviePosterValuesFromJson(String movieJsonString) throws JSONException {
+  public static String[][] getMoviePosterValuesFromJson(String movieJsonString)
+      throws JSONException {
 
+    //Declaring and initializing tokener.  Saw on walkthrough not sure this is needed since we are not doing a lot of iterating.
+    //Strictly for logging purposes I presume.
     JSONTokener tokener = new JSONTokener(movieJsonString);
-
-    while(tokener.more()){
+    //checking for additional elements and logging
+    while (tokener.more()) {
       Log.d(LOG_TAG, tokener.nextValue().toString());
     }
 
+    //Declaring and instantiating json object
     JSONObject moviePoster_root = new JSONObject(movieJsonString);
     //Logging status codes returned from TheMovieDB
-    if(moviePoster_root.has(STATUS_CODE)) {
+    if (moviePoster_root.has(STATUS_CODE)) {
       //Assigning MovieDB status codes to vars for logging
       int movieDbResponse = moviePoster_root.getInt(STATUS_CODE);
       String movieDbStatus = moviePoster_root.getString(STATUS_MESSAGE);
-      if(moviePoster_root.has(STATUS_MESSAGE)){
-        movieDbStatus = String.format("JSON STATUS MESSAGE: ", moviePoster_root.getString(STATUS_MESSAGE));
+      if (moviePoster_root.has(STATUS_MESSAGE)) {
+        movieDbStatus = String
+            .format("JSON STATUS MESSAGE: ", moviePoster_root.getString(STATUS_MESSAGE));
       }
       //Switch for MovieDB status codes, for specific messages see:  https://www.themoviedb.org/documentation/api/status-codes
       switch (movieDbResponse) {
@@ -119,7 +123,7 @@ public class JsonUtility {
     String[][] movieContentValues = new String[jsonArrayLength][];
 
     //Loop through the individual values and assign to above array
-    for(int i = 0; i <jsonMoviePosterArray.length(); i++) {
+    for (int i = 0; i < jsonMoviePosterArray.length(); i++) {
 
       JSONObject individualMovieObject = jsonMoviePosterArray.getJSONObject(i);
 
@@ -144,7 +148,8 @@ public class JsonUtility {
       String release_date = individualMovieObject.getString(KEY_MOVIE_RELEASE_DATE);
 
       //String array to hold individual movie:  id[0], title[1], plot[2], language[3], date[4], image[5], vote[6], rating[7]
-      String[] individualMovie = {String.valueOf(identification), title, plot, original_language, release_date, image, String.valueOf(vote_count), String.valueOf(rating)};
+      String[] individualMovie = {String.valueOf(identification), title, plot, original_language,
+          release_date, image, String.valueOf(vote_count), String.valueOf(rating)};
       movieContentValues[i] = individualMovie;
 
     }

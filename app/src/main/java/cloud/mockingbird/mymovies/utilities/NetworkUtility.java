@@ -11,8 +11,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * Class for network communications.
+ */
 public class NetworkUtility {
 
+  //Class variables for networking methods
   private static final String LOG_TAG = NetworkUtility.class.getSimpleName();
   private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
   private static final String DEFAULT_URL = BASE_URL;
@@ -24,11 +28,9 @@ public class NetworkUtility {
   /**
    * Please note these methods are cookie cutter methods from Google/Udacity's Sunshine Project.
    *
-   * @param context
-   * @param params
    * @return URL
    */
-  public static URL buildUrl(Context context, String params){
+  public static URL buildUrl(Context context, String params) {
 
     Uri builtUri = Uri.parse(DEFAULT_URL)
         .buildUpon()
@@ -40,9 +42,9 @@ public class NetworkUtility {
         .build();
     URL url = null;
 
-    try{
+    try {
       url = new URL(builtUri.toString());
-    }catch(MalformedURLException e){
+    } catch (MalformedURLException e) {
       e.printStackTrace();
     }
 
@@ -55,7 +57,7 @@ public class NetworkUtility {
   /**
    * Please note these methods are cookie cutter methods from Google/Udacity's Sunshine Project.
    *
-   * @param url  URL to fetch response from
+   * @param url URL to fetch response from
    * @return Contents of HTTP response
    * @throws IOException For network response
    */
@@ -63,17 +65,17 @@ public class NetworkUtility {
 
     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-    try{
+    try {
       InputStream in = urlConnection.getInputStream();
       Scanner scanner = new Scanner(in);
       scanner.useDelimiter("\\A");
 
-      if(scanner.hasNext()){
+      if (scanner.hasNext()) {
         return scanner.next();
-      }else{
+      } else {
         return null;
       }
-    }finally{
+    } finally {
       urlConnection.disconnect();
     }
 

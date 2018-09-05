@@ -14,18 +14,27 @@
   <!-- - - - - - - - - - -  -->
   <!-- MOVIE DETAILS VALUES -->
   <!-- - - - - - - - - - -  -->
+  <string name="movie_title_content">Movie Title</string>
   <string name="movie_title_label">Title:</string>
   <string name="movie_release_date_label">Release Date:</string>
   <string name="movie_rating_label">Rating:</string>
   <string name="movie_description_label">Description:</string>
 
-  <string name="settings_activity">Settings</string>
-
-
+  <!-- - - - - - - - - - -  -->
+  <!--     MENU VALUES      -->
+  <!-- - - - - - - - - - -  -->
   <string name="action_by_top_rated">Sort By Rating</string>
   <string name="action_by_most_popular">Sort By Popularity</string>
   <string name="action_refresh">Refresh</string>
 
+  <!-- - - - - - - - - - -  -->
+  <!--   SETTINGS VALUES    -->
+  <!-- - - - - - - - - - -  -->
+  <string name="settings_activity">Settings</string>
+
+  <!-- - - - - - - - - - -  -->
+  <!-- API KEY INSERT YOURS -->
+  <!-- - - - - - - - - - -  -->
   <string name="movie_db_key">1234567890</string>
 
 </resources>

@@ -22,13 +22,17 @@ import cloud.mockingbird.mymovies.utilities.JsonUtility;
 import cloud.mockingbird.mymovies.utilities.NetworkUtility;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements MoviePosterAdapterOnClickHandler{
+/**
+ * MainActivity class with super class of AppCompatActivity and implementing AdapterOnClickHandler
+ */
+public class MainActivity extends AppCompatActivity implements MoviePosterAdapterOnClickHandler {
 
+  //Class variables
   private static final String TAG = MainActivity.class.getSimpleName();
-
   public static final int TEXT_INDEX_ID = 1;
   public static final int IMAGE_INDEX_ID = 5;
 
+  //Local Variables
   private MoviePosterAdapter moviePosterAdapter;
   private RecyclerView recyclerView;
   private TextView errorMessageDisplay;
@@ -36,22 +40,27 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
   private GridLayoutManager layoutManager;
   private Parcelable moviePostersState;
 
+  /**
+   * Simple onCreate method for binding view, adapter and xml.
+   * Call to loadMovies
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
     //Tie recyclerView, errorText, and progressBar to the xml entity.
-    recyclerView = (RecyclerView) findViewById(R.id.rv_movie_posters);
-    errorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-    loadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+    recyclerView = findViewById(R.id.rv_movie_posters);
+    errorMessageDisplay = findViewById(R.id.tv_error_message_display);
+    loadingIndicator = findViewById(R.id.pb_loading_indicator);
 
     //Setting up layoutManager params.
     int recyclerViewOrientation = GridLayoutManager.VERTICAL;
     boolean shouldReversLayout = false;
 
     //Initialize layoutManager.
-    layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.span), recyclerViewOrientation,
+    layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.span),
+        recyclerViewOrientation,
         shouldReversLayout);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setHasFixedSize(true);
@@ -64,28 +73,33 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     loadMovies();
   }
 
+  //Lifecycle support methods
   @Override
   protected void onStart() {
     super.onStart();
   }
 
+  //Lifecycle support methods
   @Override
   protected void onDestroy() {
     super.onDestroy();
   }
 
+  //Lifecycle support methods
   @Override
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putParcelable("movieList",layoutManager.onSaveInstanceState());
+    outState.putParcelable("movieList", layoutManager.onSaveInstanceState());
   }
 
+  //Lifecycle support methods
   @Override
   public void onRestoreInstanceState(Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     moviePostersState = savedInstanceState.getParcelable("movieList");
   }
 
+  //onClick implementation for AdapterOnClickHandler
   @Override
   public void onClick(String[] moviePosterSelected) {
     Context context = this;
@@ -95,23 +109,36 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     startActivity(intentToStartDetailActivity);
   }
 
-  protected void showMovies(){
+  /**
+   * Displays movie data in recycler view.
+   */
+  protected void showMovies() {
     errorMessageDisplay.setVisibility(View.INVISIBLE);
     recyclerView.setVisibility(View.VISIBLE);
   }
 
-  protected void loadMovies(){
+  /**
+   * Calls showMovies method and gets specified sort and creates nested class object.
+   */
+  protected void loadMovies() {
     showMovies();
     String selectedSort = MoviePreferences.getSortPreferred();
     new FetchMovies().execute(selectedSort);
   }
 
-  protected void showErrorMessage(){
+  /**
+   * Displays error message
+   */
+  protected void showErrorMessage() {
     recyclerView.setVisibility(View.INVISIBLE);
     errorMessageDisplay.setVisibility(View.VISIBLE);
   }
 
-  public class FetchMovies extends AsyncTask<String, Void, String[][]>{
+  /**
+   * Nested class to fetch movie data asynchronously
+   * Modeled on Udacity's Sunshine App's FetchWeatherTask
+   */
+  public class FetchMovies extends AsyncTask<String, Void, String[][]> {
 
     @Override
     protected void onPreExecute() {
@@ -122,10 +149,10 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     @Override
     protected void onPostExecute(String[][] strings) {
       loadingIndicator.setVisibility(View.INVISIBLE);
-      if(strings != null){
+      if (strings != null) {
         showMovies();
         moviePosterAdapter.setMoviePosterData(strings);
-      }else{
+      } else {
         showErrorMessage();
       }
 
@@ -138,11 +165,11 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
       }
       String params = strings[0];
       URL movieURL = NetworkUtility.buildUrl(MainActivity.this, params);
-      try{
+      try {
         String jsonResponse = NetworkUtility.getResponseFromHttpURL(movieURL);
         String[][] jsonMovieData = JsonUtility.getMoviePosterValuesFromJson(jsonResponse);
         return jsonMovieData;
-      }catch(Exception e){
+      } catch (Exception e) {
         e.printStackTrace();
         return null;
       }
@@ -150,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
 
   }
 
+  //Boiler plate code from Udacity's Sunshine App
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
@@ -158,9 +186,10 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     return true;
   }
 
+  //Menu action overflow items switch utilizes menu.xml values for cases
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()){
+    switch (item.getItemId()) {
       case R.id.action_by_rating:
         new FetchMovies().execute(MoviePreferences.PREF_SORT_RATING);
         return true;
